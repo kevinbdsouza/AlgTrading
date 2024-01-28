@@ -1,2 +1,2 @@
 # AlgTrading
-Trying to find sort term signals for intraday/HFT
+Trying to find short term signals for intraday/HFT
