@@ -1,3 +1,5 @@
 numpy
 polars
 toraniko
+pandas
+ibapi
