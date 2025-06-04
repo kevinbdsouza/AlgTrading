@@ -11,7 +11,7 @@ def main():
         # Load the simulated daily data
         # The CSV has a trailing comma in the header, so read_csv might infer an extra null column.
         # We'll select specific columns to avoid this.
-        df = pl.read_csv("luchkata_training/simulated_daily_data.csv", columns=['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
+        df = pl.read_csv("examples/simulated_daily_data.csv", columns=['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
     except Exception as e:
         print(f"Error loading data: {e}")
         return
