@@ -191,10 +191,15 @@ class IntradayTradingSystem:
 
             # Determine order quantity
             if action == "SELL":
-                # Close existing position if present
+                # If we have an open position, use its size to close it
                 position = self.risk_manager.positions.get(symbol)
-                quantity = position.quantity if position else 0
+                if position:
+                    quantity = position.quantity
+                else:
+                    # No existing position; size based on risk parameters
+                    quantity = self.risk_manager.calculate_position_size(symbol, price)
             else:
+                # Use standard sizing for BUY orders
                 quantity = self.risk_manager.calculate_position_size(symbol, price)
 
             if quantity <= 0:
