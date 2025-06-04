@@ -19,11 +19,11 @@ pip install -r requirements.txt
 
 ### Example Usage
 
-An example script demonstrating basic usage of toraniko for momentum factor calculation can be found in `luchkata_training/toraniko_example.py`. This script uses simulated data and placeholder values for market capitalization and sector information to illustrate how to structure data and call toraniko's functions.
+An example script demonstrating basic usage of toraniko for momentum factor calculation can be found in `docs/luchkata_training/toraniko_example.py`. This script uses simulated data and placeholder values for market capitalization and sector information to illustrate how to structure data and call toraniko's functions.
 
 To run the example:
 ```bash
-python luchkata_training/toraniko_example.py
+python docs/luchkata_training/toraniko_example.py
 ```
 
 You can adapt this example to incorporate more sophisticated risk modeling and factor analysis into your trading strategies developed with the `tradingbot.py` framework.
