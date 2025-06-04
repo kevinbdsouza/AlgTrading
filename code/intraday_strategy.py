@@ -188,7 +188,18 @@ class IntradayTradingSystem:
         """Execute a live trade based on signal."""
         try:
             action = "BUY" if signal == SignalType.BUY.value else "SELL"
-            quantity = self.risk_manager.calculate_position_size(symbol, price)
+
+            # Determine order quantity
+            if action == "SELL":
+                # Close existing position if present
+                position = self.risk_manager.positions.get(symbol)
+                quantity = position.quantity if position else 0
+            else:
+                quantity = self.risk_manager.calculate_position_size(symbol, price)
+
+            if quantity <= 0:
+                self.logger.warning(f"No position to {action.lower()} for {symbol}")
+                return
             
             # Validate order with risk manager
             is_valid, reason = self.risk_manager.validate_order(symbol, quantity, price, action)
