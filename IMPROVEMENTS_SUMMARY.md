@@ -169,7 +169,8 @@ The improved system includes:
 AlgTrading/
 ├── README.md
 ├── requirements.txt
-├── verify_toraniko.py
+├── tests/
+│   └── test_imports.py
 ├── code/
 │   ├── README.md                    # Comprehensive documentation
 │   ├── config.py                    # Configuration management
