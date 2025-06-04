@@ -10,11 +10,13 @@ This script demonstrates various features of the trading system:
 """
 
 import pandas as pd
+import polars as pl
 from datetime import datetime, timedelta
 
 from config import TradingConfig
 from intraday_strategy import IntradayTradingSystem
 from logger import setup_logger
+from factor_model import FactorModel
 
 
 def example_basic_backtest():
@@ -242,6 +244,33 @@ def example_performance_analysis():
             print(f"Average Monthly Return: {monthly_returns.mean():.2%}")
 
 
+def example_factor_model():
+    """Example: Using toraniko factor model utilities."""
+    print("\n=== EXAMPLE 6: Factor Model ===")
+
+    # Load sample data from docs examples
+    df = pl.read_csv("docs/examples/simulated_daily_data.csv", columns=[
+        "Date",
+        "Open",
+        "High",
+        "Low",
+        "Close",
+        "Adj Close",
+        "Volume",
+    ])
+    df = df.rename({"Date": "date", "Close": "close_price"})
+    df = df.with_columns(pl.lit("SIM").alias("symbol"))
+    df = df.sort("date").with_columns(
+        asset_returns=pl.col("close_price").pct_change().over("symbol")
+    ).drop_nulls("asset_returns")
+
+    returns_df = df.select(["date", "symbol", "asset_returns"])
+
+    # Calculate momentum scores with FactorModel
+    style_df = FactorModel.momentum_scores(returns_df, trailing_days=60)
+    print(style_df.head())
+
+
 def main():
     """Run all examples."""
     # Setup logging
@@ -255,6 +284,7 @@ def main():
         example_custom_strategy()
         example_risk_management()
         example_performance_analysis()
+        example_factor_model()
         
         print("\n=== ALL EXAMPLES COMPLETED ===")
         print("The improved trading system demonstrates:")

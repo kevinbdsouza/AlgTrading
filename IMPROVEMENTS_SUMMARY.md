@@ -5,7 +5,7 @@
 ### ✅ Completed Tasks
 
 1. **Created `docs/` folder** and moved:
-   - `luchkata_training/` → `docs/luchkata_training/`
+   - `examples/` (formerly `luchkata_training/`) → `docs/examples/`
    - `books/` → `docs/books/`
 
 2. **Completely refactored `code/intraday_strategy.py`** from 495 lines of monolithic code to a modular, production-ready system
@@ -190,7 +190,7 @@ AlgTrading/
     │   ├── Chan_QuantTrade.pdf
     │   ├── Davey_AlgTrade.pdf
     │   └── Davey_Confessions.pdf
-    └── luchkata_training/            # Training materials (moved)
+    └── examples/                     # Training materials (moved)
         ├── Algorithmic_Trading_Machine_Learning_Quant_Strategies.ipynb
         ├── sentiment_data.csv
         ├── simulated_5min_data.csv
