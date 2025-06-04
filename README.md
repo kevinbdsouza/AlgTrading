@@ -1,31 +1,78 @@
 # AlgTrading
-Trying to find short term signals for intraday
 
-## Note
-* Look into Momentum strategies, Mean reverting strategies 
-* Diversification of strategies helps minimize different types of risks. 
+A collection of tools for researching and running intraday trading strategies. It includes a modular trading system, backtester, risk management utilities and several example strategies.
 
-## Quantitative Analysis with Toraniko
+## Features
 
-This repository now includes the [toraniko](https://github.com/0xfdf/toraniko) library, a multi-factor equity risk model for quantitative trading.
+- **Multiple strategies**: Moving average crossover, RSI mean reversion, Bollinger Bands and MACD (new).
+- **Backtesting engine** with metrics such as total return, Sharpe ratio, drawdown and more.
+- **Risk management**: position sizing, stop loss/take profit and daily loss limits.
+- **Live trading support** via Interactive Brokers API with optional paper trading.
+- **Factor model utilities** using [toraniko](https://github.com/0xfdf/toraniko) for quantitative analysis.
 
-### Dependencies
+## Installation
 
-Toraniko and its dependencies (numpy, polars) have been added to `requirements.txt`. You can install them using:
+Install the required packages:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Example Usage
+## Quick Start
 
-An example script demonstrating basic usage of toraniko for momentum factor calculation can be found in `docs/examples/toraniko_example.py`. This script uses simulated data and placeholder values for market capitalization and sector information to illustrate how to structure data and call toraniko's functions.
+Run a simple moving average cross backtest:
 
-To run the example:
-```bash
-python docs/examples/toraniko_example.py
+```python
+from config import TradingConfig
+from intraday_strategy import IntradayTradingSystem
+
+system = IntradayTradingSystem(TradingConfig())
+system.set_strategy('ma_cross')
+results = system.run_backtest('SPY', '20230101', '20231231')
+print(results.metrics)
 ```
 
-You can adapt this example to incorporate more sophisticated risk modeling and factor analysis into your trading strategies developed with the `tradingbot.py` framework.
+For live paper trading (requires a running TWS/Gateway instance):
 
-The repository includes a lightweight wrapper `FactorModel` in `code/factor_model.py` that exposes toraniko's momentum scoring and factor return estimation functions for use within your own strategies or analysis scripts.
+```python
+system.connect_to_ibkr()
+system.set_strategy('ma_cross')
+system.run_live_trading('SPY', duration_minutes=60)
+print(system.get_performance_metrics())
+```
+
+## Backtesting Metrics
+
+The backtester records a suite of metrics including:
+
+- Profit and loss (PnL)
+- Win rate and profit factor
+- Sharpe and Sortino ratios
+- Maximum drawdown and volatility
+- Trade expectancy and Calmar ratio
+
+Results are returned as a dictionary for further analysis or comparison.
+
+## Live Performance Tracking
+
+During live (paper) trading all executed trades are logged and the system keeps running totals of realised and unrealised PnL. Performance metrics can be retrieved via `get_performance_metrics()` and may be used to automatically adjust strategy parameters.
+
+## Examples and Tests
+
+Additional examples can be found under `code/example_usage.py` and `docs/examples/`. To verify the installation run:
+
+```bash
+pytest -q
+```
+
+## Folder Structure
+
+```
+AlgTrading/
+├── code/              # Trading system modules
+├── docs/              # Books and example notebooks
+├── tests/             # Basic import tests
+└── requirements.txt
+```
+
+This project is for research purposes. Use at your own risk when trading live.

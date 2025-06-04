@@ -19,9 +19,10 @@ from exceptions import TradingError, ConnectionError, OrderError
 from data_manager import DataManager
 from strategy_base import BaseStrategy, StrategyFactory, SignalType
 from risk_manager import RiskManager
-from backtester import Backtester, BacktestResults
+from backtester import Backtester, BacktestResults, Trade
 from ibkr_client import IBapi
 import trade_utils
+import numpy as np
 
 
 class IntradayTradingSystem:
@@ -63,7 +64,8 @@ class IntradayTradingSystem:
         self.is_trading = False
         self.current_strategy: Optional[BaseStrategy] = None
         self.performance_metrics: Dict[str, Any] = {}
-        
+        self.live_trades: List[Trade] = []
+
         self.logger.info("Intraday Trading System initialized")
     
     def set_strategy(self, strategy_name: str, **strategy_params) -> None:
@@ -221,14 +223,53 @@ class IntradayTradingSystem:
             
             self.ib_client.placeOrder(order.orderId, contract, order)
             
-            # Update risk manager
-            self.risk_manager.update_position(symbol, quantity, price, action)
-            
+            # Update risk manager and record trade if position closed
+            trade = self.risk_manager.update_position(symbol, quantity, price, action)
+            if trade:
+                self.live_trades.append(trade)
+                self._update_live_metrics()
+
             self.logger.info(f"Executed {action} order: {quantity} {symbol} at {price:.2f}")
-            
+
         except Exception as e:
             self.logger.error(f"Failed to execute trade: {e}")
             raise OrderError(f"Trade execution failed: {e}")
+
+    def _update_live_metrics(self) -> None:
+        """Update live trading performance metrics."""
+        if not self.live_trades:
+            return
+
+        pnls = [t.pnl for t in self.live_trades]
+        wins = [p for p in pnls if p > 0]
+        losses = [p for p in pnls if p < 0]
+
+        win_rate = (len(wins) / len(pnls)) * 100 if pnls else 0
+        avg_win = float(np.mean(wins)) if wins else 0.0
+        avg_loss = float(np.mean(losses)) if losses else 0.0
+        profit_factor = abs(sum(wins) / sum(losses)) if losses else float('inf')
+
+        realized = sum(pnls)
+        unrealized = sum(pos.unrealized_pnl for pos in self.risk_manager.positions.values())
+
+        self.performance_metrics = {
+            'realized_pnl': realized,
+            'unrealized_pnl': unrealized,
+            'total_pnl': realized + unrealized,
+            'num_trades': len(pnls),
+            'win_rate': win_rate,
+            'avg_win': avg_win,
+            'avg_loss': avg_loss,
+            'profit_factor': profit_factor,
+        }
+
+    def adjust_strategy_based_on_performance(self, min_win_rate: float = 40.0) -> None:
+        """Basic example of adjusting parameters based on live results."""
+        if self.performance_metrics.get('win_rate', 100) < min_win_rate:
+            if hasattr(self.current_strategy, 'short_period') and hasattr(self.current_strategy, 'long_period'):
+                self.current_strategy.short_period = max(5, self.current_strategy.short_period - 1)
+                self.current_strategy.long_period = max(self.current_strategy.short_period + 5, self.current_strategy.long_period - 1)
+                self.logger.info("Adjusted moving average periods based on live performance")
     
     def _check_risk_management(self, symbol: str, current_price: float) -> None:
         """Check risk management rules."""
@@ -378,6 +419,7 @@ class IntradayTradingSystem:
     
     def get_performance_metrics(self) -> Dict[str, Any]:
         """Get current performance metrics."""
+        self._update_live_metrics()
         return self.performance_metrics.copy()
     
     def stop_trading(self) -> None:
