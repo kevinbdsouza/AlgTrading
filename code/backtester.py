@@ -302,6 +302,10 @@ class Backtester:
         if len(returns) > 1:
             # Sharpe ratio (assuming daily data, risk-free rate = 0)
             sharpe_ratio = (returns.mean() / returns.std()) * np.sqrt(252) if returns.std() > 0 else 0
+
+            # Sortino ratio
+            downside = returns[returns < 0]
+            sortino_ratio = (returns.mean() / downside.std()) * np.sqrt(252) if len(downside) > 0 and downside.std() > 0 else 0
             
             # Maximum drawdown
             cumulative = (1 + returns).cumprod()
@@ -313,11 +317,22 @@ class Backtester:
             volatility = returns.std() * np.sqrt(252) * 100
         else:
             sharpe_ratio = 0
+            sortino_ratio = 0
             max_drawdown = 0
             volatility = 0
         
         # Calmar ratio
         calmar_ratio = (total_return_pct / abs(max_drawdown)) if max_drawdown != 0 else 0
+
+        expectancy = ((win_rate / 100) * avg_win) + (((100 - win_rate) / 100) * avg_loss)
+
+        # Trades per year approximation
+        if not portfolio_history.empty:
+            days = (portfolio_history.index[-1] - portfolio_history.index[0]).days
+            years = days / 365 if days > 0 else 1
+        else:
+            years = 1
+        trades_per_year = len(trades) / years if years else len(trades)
         
         return {
             'total_return': total_return,
@@ -332,9 +347,12 @@ class Backtester:
             'max_loss': max_loss,
             'avg_trade_duration_days': avg_trade_duration,
             'sharpe_ratio': sharpe_ratio,
+            'sortino_ratio': sortino_ratio,
             'max_drawdown_pct': max_drawdown,
             'volatility_pct': volatility,
-            'calmar_ratio': calmar_ratio
+            'calmar_ratio': calmar_ratio,
+            'expectancy': expectancy,
+            'trades_per_year': trades_per_year
         }
     
     def _empty_metrics(self) -> Dict[str, Any]:
@@ -352,9 +370,12 @@ class Backtester:
             'max_loss': 0,
             'avg_trade_duration_days': 0,
             'sharpe_ratio': 0,
+            'sortino_ratio': 0,
             'max_drawdown_pct': 0,
             'volatility_pct': 0,
-            'calmar_ratio': 0
+            'calmar_ratio': 0,
+            'expectancy': 0,
+            'trades_per_year': 0
         }
     
     def compare_strategies(

@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from logger import get_logger
 from exceptions import RiskManagementError
 from config import TradingConfig
+from backtester import Trade
 
 
 @dataclass
@@ -145,8 +146,8 @@ class RiskManager:
             self.logger.error(f"Error calculating position size: {e}")
             return 1  # Default to 1 share
     
-    def update_position(self, symbol: str, quantity: int, price: float, 
-                       action: str, timestamp: Optional[datetime] = None) -> None:
+    def update_position(self, symbol: str, quantity: int, price: float,
+                       action: str, timestamp: Optional[datetime] = None) -> Optional[Trade]:
         """
         Update position after a trade.
         
@@ -166,7 +167,7 @@ class RiskManager:
                     # Create new position
                     stop_loss = price * (1 - self.stop_loss_pct)
                     take_profit = price * (1 + self.take_profit_pct)
-                    
+
                     self.positions[symbol] = Position(
                         symbol=symbol,
                         quantity=quantity,
@@ -176,11 +177,13 @@ class RiskManager:
                         stop_loss=stop_loss,
                         take_profit=take_profit
                     )
-                    
+
                     self.logger.info(f"Opened new position: {symbol} {quantity}@{price:.2f}")
+                    self.daily_trades += 1
+                    return None
                 else:
                     self.logger.warning(f"Cannot sell {symbol}: no existing position")
-                    return
+                    return None
             else:
                 position = self.positions[symbol]
                 
@@ -197,8 +200,9 @@ class RiskManager:
                     position.stop_loss = position.entry_price * (1 - self.stop_loss_pct)
                     position.take_profit = position.entry_price * (1 + self.take_profit_pct)
                     
-                    self.logger.info(f"Added to position: {symbol} {quantity}@{price:.2f}, "
-                                   f"new avg: {position.entry_price:.2f}")
+                    self.logger.info(
+                        f"Added to position: {symbol} {quantity}@{price:.2f}, new avg: {position.entry_price:.2f}")
+                    return None
                 
                 elif action == "SELL":
                     # Reduce or close position
@@ -206,22 +210,54 @@ class RiskManager:
                         # Close entire position
                         realized_pnl = (price - position.entry_price) * position.quantity
                         self.daily_pnl += realized_pnl
-                        
-                        self.logger.info(f"Closed position: {symbol} {position.quantity}@{price:.2f}, "
-                                       f"PnL: {realized_pnl:.2f}")
-                        
+
+                        self.logger.info(
+                            f"Closed position: {symbol} {position.quantity}@{price:.2f}, PnL: {realized_pnl:.2f}")
+
+                        trade = Trade(
+                            symbol=symbol,
+                            entry_date=position.entry_time,
+                            exit_date=timestamp,
+                            entry_price=position.entry_price,
+                            exit_price=price,
+                            quantity=position.quantity,
+                            side="LONG",
+                            pnl=realized_pnl,
+                            pnl_pct=((price - position.entry_price) / position.entry_price) * 100,
+                            duration_days=(timestamp - position.entry_time).days
+                        )
+
                         del self.positions[symbol]
+                        self.daily_trades += 1
+                        return trade
                     else:
                         # Partial close
                         realized_pnl = (price - position.entry_price) * quantity
                         self.daily_pnl += realized_pnl
                         position.quantity -= quantity
                         position.current_price = price
-                        
-                        self.logger.info(f"Partially closed position: {symbol} {quantity}@{price:.2f}, "
-                                       f"PnL: {realized_pnl:.2f}, remaining: {position.quantity}")
-            
+
+                        self.logger.info(
+                            f"Partially closed position: {symbol} {quantity}@{price:.2f}, PnL: {realized_pnl:.2f}, remaining: {position.quantity}")
+
+                        trade = Trade(
+                            symbol=symbol,
+                            entry_date=position.entry_time,
+                            exit_date=timestamp,
+                            entry_price=position.entry_price,
+                            exit_price=price,
+                            quantity=quantity,
+                            side="LONG",
+                            pnl=realized_pnl,
+                            pnl_pct=((price - position.entry_price) / position.entry_price) * 100,
+                            duration_days=(timestamp - position.entry_time).days
+                        )
+
+                        self.daily_trades += 1
+                        return trade
+
             self.daily_trades += 1
+            return None
             
         except Exception as e:
             self.logger.error(f"Error updating position: {e}")

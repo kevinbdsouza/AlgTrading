@@ -237,13 +237,67 @@ class BollingerBandsStrategy(BaseStrategy):
         }
 
 
+class MACDStrategy(BaseStrategy):
+    """Moving Average Convergence Divergence strategy."""
+
+    def __init__(self, config: Optional[TradingConfig] = None,
+                 fast_period: int = 12, slow_period: int = 26,
+                 signal_period: int = 9):
+        super().__init__(config)
+        self.fast_period = fast_period
+        self.slow_period = slow_period
+        self.signal_period = signal_period
+
+    def generate_signals(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Generate signals based on MACD crossovers."""
+        self.validate_data(data)
+
+        df = data.copy()
+
+        df['ema_fast'] = df['Close'].ewm(span=self.fast_period, adjust=False).mean()
+        df['ema_slow'] = df['Close'].ewm(span=self.slow_period, adjust=False).mean()
+        df['macd'] = df['ema_fast'] - df['ema_slow']
+        df['signal_line'] = df['macd'].ewm(span=self.signal_period, adjust=False).mean()
+
+        df['signal'] = SignalType.HOLD.value
+
+        buy_condition = (
+            (df['macd'] > df['signal_line']) &
+            (df['macd'].shift(1) <= df['signal_line'].shift(1))
+        )
+        sell_condition = (
+            (df['macd'] < df['signal_line']) &
+            (df['macd'].shift(1) >= df['signal_line'].shift(1))
+        )
+
+        df.loc[buy_condition, 'signal'] = SignalType.BUY.value
+        df.loc[sell_condition, 'signal'] = SignalType.SELL.value
+
+        df['signal_strength'] = abs(df['macd'] - df['signal_line']) / df['Close']
+
+        self.logger.info(f"Generated {(df['signal'] != 0).sum()} MACD signals")
+
+        return df
+
+    def get_strategy_params(self) -> Dict[str, Any]:
+        """Get strategy parameters."""
+        return {
+            'name': self.name,
+            'fast_period': self.fast_period,
+            'slow_period': self.slow_period,
+            'signal_period': self.signal_period,
+            'type': 'trend_following'
+        }
+
+
 class StrategyFactory:
     """Factory for creating strategy instances."""
     
     _strategies = {
         'ma_cross': MovingAverageCrossStrategy,
         'rsi': RSIStrategy,
-        'bollinger': BollingerBandsStrategy
+        'bollinger': BollingerBandsStrategy,
+        'macd': MACDStrategy
     }
     
     @classmethod
