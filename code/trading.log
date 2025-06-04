@@ -1,0 +1,76 @@
+2025-06-04 04:11:54,778 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:11:54,778 - trading_system - INFO - Strategy set to: MovingAverageCrossStrategy
+2025-06-04 04:11:54,778 - trading_system - INFO - Starting backtest: TEST from 20230101 to 20230201
+2025-06-04 04:11:54,788 - trading_system - INFO - === BACKTEST RESULTS ===
+2025-06-04 04:11:54,788 - trading_system - INFO - Strategy: MovingAverageCrossStrategy
+2025-06-04 04:11:54,788 - trading_system - INFO - Total Return: 1.22%
+2025-06-04 04:11:54,788 - trading_system - INFO - Number of Trades: 1
+2025-06-04 04:11:54,788 - trading_system - INFO - Win Rate: 100.00%
+2025-06-04 04:11:54,788 - trading_system - INFO - Sharpe Ratio: 2.78
+2025-06-04 04:11:54,788 - trading_system - INFO - Max Drawdown: -0.81%
+2025-06-04 04:11:54,788 - trading_system - INFO - Profit Factor: inf
+2025-06-04 04:11:54,788 - trading_system - INFO - Average Win: $1220.10
+2025-06-04 04:11:54,788 - trading_system - INFO - Average Loss: $0.00
+2025-06-04 04:11:54,788 - trading_system - INFO - Average Trade Duration: 7.0 days
+2025-06-04 04:11:58,362 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:11:58,362 - trading_system - INFO - Strategy set to: MovingAverageCrossStrategy
+2025-06-04 04:11:58,362 - trading_system - INFO - Starting backtest: SPY from 20230101 to 20231231
+2025-06-04 04:11:58,381 - trading_system - INFO - === BACKTEST RESULTS ===
+2025-06-04 04:11:58,381 - trading_system - INFO - Strategy: MovingAverageCrossStrategy
+2025-06-04 04:11:58,381 - trading_system - INFO - Total Return: -13.71%
+2025-06-04 04:11:58,381 - trading_system - INFO - Number of Trades: 12
+2025-06-04 04:11:58,381 - trading_system - INFO - Win Rate: 25.00%
+2025-06-04 04:11:58,381 - trading_system - INFO - Sharpe Ratio: -0.84
+2025-06-04 04:11:58,381 - trading_system - INFO - Max Drawdown: -22.37%
+2025-06-04 04:11:58,381 - trading_system - INFO - Profit Factor: 0.34
+2025-06-04 04:11:58,381 - trading_system - INFO - Average Win: $2381.24
+2025-06-04 04:11:58,381 - trading_system - INFO - Average Loss: $-2317.42
+2025-06-04 04:11:58,381 - trading_system - INFO - Average Trade Duration: 16.3 days
+2025-06-04 04:11:58,382 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:11:58,432 - trading_system - INFO - Strategy comparison completed for 3 strategies
+2025-06-04 04:11:58,438 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:11:58,438 - trading_system - INFO - Strategy set to: RSIStrategy
+2025-06-04 04:11:58,438 - trading_system - INFO - Starting backtest: AAPL from 20230601 to 20231231
+2025-06-04 04:11:58,450 - trading_system - INFO - === BACKTEST RESULTS ===
+2025-06-04 04:11:58,450 - trading_system - INFO - Strategy: RSIStrategy
+2025-06-04 04:11:58,450 - trading_system - INFO - Total Return: 0.00%
+2025-06-04 04:11:58,450 - trading_system - INFO - Number of Trades: 0
+2025-06-04 04:11:58,450 - trading_system - INFO - Win Rate: 0.00%
+2025-06-04 04:11:58,450 - trading_system - INFO - Sharpe Ratio: 0.00
+2025-06-04 04:11:58,450 - trading_system - INFO - Max Drawdown: 0.00%
+2025-06-04 04:11:58,450 - trading_system - INFO - Profit Factor: 0.00
+2025-06-04 04:11:58,450 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:11:58,451 - trading_system - INFO - Strategy set to: MovingAverageCrossStrategy
+2025-06-04 04:11:58,451 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:11:58,451 - trading_system - INFO - Strategy set to: MovingAverageCrossStrategy
+2025-06-04 04:11:58,451 - trading_system - INFO - Starting backtest: QQQ from 20230101 to 20231231
+2025-06-04 04:11:58,466 - trading_system - INFO - === BACKTEST RESULTS ===
+2025-06-04 04:11:58,466 - trading_system - INFO - Strategy: MovingAverageCrossStrategy
+2025-06-04 04:11:58,466 - trading_system - INFO - Total Return: 21.23%
+2025-06-04 04:11:58,466 - trading_system - INFO - Number of Trades: 6
+2025-06-04 04:11:58,466 - trading_system - INFO - Win Rate: 66.67%
+2025-06-04 04:11:58,467 - trading_system - INFO - Sharpe Ratio: 1.10
+2025-06-04 04:11:58,467 - trading_system - INFO - Max Drawdown: -10.63%
+2025-06-04 04:11:58,467 - trading_system - INFO - Profit Factor: 3.74
+2025-06-04 04:11:58,467 - trading_system - INFO - Average Win: $7244.26
+2025-06-04 04:11:58,467 - trading_system - INFO - Average Loss: $-3871.76
+2025-06-04 04:11:58,467 - trading_system - INFO - Average Trade Duration: 40.7 days
+2025-06-04 04:12:02,971 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:12:02,980 - trading_system - INFO - Strategy set to: MovingAverageCrossStrategy
+2025-06-04 04:12:02,980 - trading_system - INFO - Starting backtest: TSLA from 20230101 to 20230301
+2025-06-04 04:12:02,990 - trading_system - INFO - === BACKTEST RESULTS ===
+2025-06-04 04:12:02,990 - trading_system - INFO - Strategy: MovingAverageCrossStrategy
+2025-06-04 04:12:02,990 - trading_system - INFO - Total Return: -0.55%
+2025-06-04 04:12:02,990 - trading_system - INFO - Number of Trades: 1
+2025-06-04 04:12:02,990 - trading_system - INFO - Win Rate: 0.00%
+2025-06-04 04:12:02,990 - trading_system - INFO - Sharpe Ratio: -0.45
+2025-06-04 04:12:02,990 - trading_system - INFO - Max Drawdown: -2.01%
+2025-06-04 04:12:02,990 - trading_system - INFO - Profit Factor: 0.00
+2025-06-04 04:12:02,990 - trading_system - INFO - Average Win: $0.00
+2025-06-04 04:12:02,990 - trading_system - INFO - Average Loss: $-554.43
+2025-06-04 04:12:02,990 - trading_system - INFO - Average Trade Duration: 7.0 days
+2025-06-04 04:12:02,990 - trading_system - INFO - Trading stop requested
+2025-06-04 04:12:14,166 - trading_system - INFO - Intraday Trading System initialized
+2025-06-04 04:12:14,175 - trading_system - INFO - Strategy set to: MovingAverageCrossStrategy
+2025-06-04 04:12:14,219 - trading_system - INFO - Strategy comparison completed for 3 strategies
+2025-06-04 04:12:14,223 - trading_system - INFO - Trading stop requested
