@@ -61,7 +61,7 @@ class IBapi(EWrapper, EClient):
 
         return self.contract_details[reqId].contract
 
-    def tickByTickAllLast(self, reqId, tickType, time_val, price, size, tickAtrribLast, exchange, specialConditions):
+    def tickByTickAllLast(self, reqId, tickType, time_val, price, size, tickAttribLast, exchange, specialConditions):
         if tickType == 1: # TickType 1 indicates 'Last' tick
             # Convert Unix timestamp to datetime
             dt_object = pd.to_datetime(time_val, unit='s')
